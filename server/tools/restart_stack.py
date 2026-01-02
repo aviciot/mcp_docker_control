@@ -32,6 +32,10 @@ def restart_stack(container_name: str, password: str, timeout: int = 10):
         # Validate password first
         import os
         expected_password = os.getenv('AUTH_PASSWORD', '')
+        
+        # Debug logging for password validation
+        logger.info(f"RESTART_STACK SECURITY CHECK - Container: {container_name}, Password provided: {'YES' if password else 'NO'}, Password length: {len(password) if password else 0}, Expected length: {len(expected_password)}, Match: {password == expected_password if password else False}")
+        
         if not password or password != expected_password:
             log_audit(operation="restart_stack", container=container_name, success=False, error="Invalid or missing password")
             return "Error: Invalid or missing password. Authentication required for this operation."

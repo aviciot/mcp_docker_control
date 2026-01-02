@@ -22,113 +22,84 @@ def stack_operations():
         str: Stack management instructions
     """
     
-    return """# Docker Compose Stack Management Guide
+    return """# Docker Stack Operations - PASSWORD RULES
 
-## Quick Stack Operations
+## CRITICAL: Password Authentication
 
-### 1. View All Stacks
-**When user asks:** "Show stacks", "What stacks are running?", "List compose projects"
-**Use:** list_stacks()
-**Result:** Summary view of all Docker Compose projects with container counts
+**ALL control operations require password authentication.**
 
-### 2. View Specific Stack Details  
-**When user asks:** "Show me the omni2 stack", "What's in stack X?"
-**Use:** get_container_stack(container_name="any-container-in-stack")
-**Result:** Detailed view of one specific stack
+### Operations That Need Password:
+- restart_stack() - Restart entire stack
+- restart_container() - Restart single container  
+- start_container() - Start container
+- stop_container() - Stop container
+- compose_up/down/restart() - Compose operations
 
-### 3. Restart Entire Stack
-**When user asks:** "Restart omni2 stack", "Reboot the X application"
-**CRITICAL:** This operation REQUIRES password!
-**Flow:**
-  1. Check user's message for password
-  2. If NO password found → **ASK and WAIT**: "I need the password to restart the stack. What is the password?"
-  3. **DO NOT** call any tool until user provides password
-  4. Once user provides password → Use: restart_stack(container_name="any-container-in-stack", password="exact-user-password")
-  
-**FORBIDDEN:** Never guess passwords, never use default values like "admin", "password", "docker"
+### Password Handling Rules:
 
-## Password-Required Operations
+**RULE 1: Never guess passwords**
+- NO default passwords ("admin", "password", "docker")
+- NO common passwords
+- NO making up passwords
 
-**CRITICAL RULE:** These operations ALWAYS need password parameter:
-- restart_stack() - Restart all containers in a stack
-- start_container() - Start a stopped container
-- stop_container() - Stop a running container  
-- restart_container() - Restart a single container
-- compose_up() - Start compose services
-- compose_down() - Stop compose services
-- compose_restart() - Restart compose services
+**RULE 2: Check user's request first**
+- If password IN request → Use it immediately
+- If password NOT in request → Ask and wait
 
-**Correct Flow:**
-1. User requests operation: "Restart omni2 stack"
-2. Check if password provided in user's message
-3. If NO password in message → **STOP and ASK**: "I need the password to restart the omni2 stack. What is the password?"
-4. **WAIT** for user to provide password - DO NOT GUESS
-5. Once user provides password → Execute: restart_stack(container_name="omni2-bridge", password="user-provided-password")
+**RULE 3: Ask clearly and wait**
+When no password provided:
+1. Ask: "To restart [name], I need the password. What is the password?"
+2. WAIT for user response
+3. Then execute with provided password
 
-**CRITICAL RULE: NEVER GUESS PASSWORDS**
-- DO NOT use default passwords like "admin", "password", "docker", etc.
-- DO NOT try common passwords
-- DO NOT make up passwords
-- ALWAYS wait for user to explicitly provide the password
+### Correct Examples:
 
-**Example Dialogue:**
+**Example 1 - No password provided:**
 ```
-User: "Restart the omni2 stack"
-Assistant: "I need the password to restart the omni2 stack. What is the password?"
-[WAIT - do not call any tool yet]
-
-User: "the password is avicohen"
-Assistant: [NOW calls restart_stack("omni2-bridge", "avicohen")]
+User: "Restart omni2 stack"
+You: "To restart the omni2 stack, I need the password. What is the password?"
+[WAIT]
+User: "avicohen"
+You: [Call restart_stack("omni2-bridge", "avicohen")]
 ```
 
-**Example WITH Password in Request:**
+**Example 2 - Password in request:**
 ```
 User: "Restart omni2 stack with password avicohen"
-Assistant: [calls restart_stack("omni2-bridge", "avicohen") immediately]
+You: [Call restart_stack("omni2-bridge", "avicohen") immediately]
 ```
 
-## Common Patterns
+**Example 3 - Password separately mentioned:**
+```
+User: "Restart omni2, password is avicohen"
+You: [Call restart_stack("omni2-bridge", "avicohen") immediately]
+```
 
-### Pattern 1: Stack Overview
-User: "What stacks are running?"
-→ Use: list_stacks()
-→ Shows: All compose projects with summary
+## Stack Operations
 
-### Pattern 2: Stack Details
-User: "Show me details for omni2"  
-→ Use: get_container_stack("omni2-bridge")
-→ Shows: All containers in omni2 stack with full details
+### View Operations (No password needed):
 
-### Pattern 3: Stack Restart
-User: "Restart omni2"
-→ Ask: "I need the password to restart the omni2 stack."
-→ User provides password
-→ Use: restart_stack("omni2-bridge", "password")
+**list_stacks()** - Show all Docker Compose stacks
+- Usage: "Show all stacks", "What stacks are running?"
+- Fast overview of all projects
 
-## Performance Tips
+**get_container_stack(container_name)** - Details for one stack
+- Usage: "Show me the omni2 stack details"
+- Lists all containers in specific stack
 
-✅ DO: Use list_stacks() for overview - very fast
-✅ DO: Use get_container_stack() for one stack - targeted
-❌ DON'T: Use list_containers() then manually group - slow
+### Control Operations (Password required):
 
-## Error Handling
-
-If restart_stack returns "Invalid password":
-→ Respond: "The password was incorrect. Please provide the correct password to restart the stack."
-
-If container not found:
-→ First use list_stacks() to show available stacks
-→ Ask user to specify correct stack name
+**restart_stack(container_name, password)** - Restart entire stack
+- Usage: After getting password, restart all containers in stack
+- Can provide any container name from the stack
 
 ## Quick Reference
 
-| User Request | Tool to Use | Needs Password? |
-|--------------|-------------|-----------------|
-| "Show stacks" | list_stacks() | No |
-| "Details for stack X" | get_container_stack() | No |
-| "Restart stack X" | restart_stack() | **YES** |
-| "What's in omni2?" | get_container_stack() | No |
-| "Reboot application" | restart_stack() | **YES** |
+| User Says | Password in Request? | Action |
+|-----------|---------------------|---------|
+| "Restart omni2" | NO | Ask for password, wait, then call tool |
+| "Restart omni2 with password xyz" | YES | Call restart_stack immediately |
+| "Show stacks" | N/A (read-only) | Call list_stacks immediately |
 
-Remember: ALWAYS ask for password before calling any control operation!
+Remember: When in doubt about password → Ask and wait. Never guess.
 """
