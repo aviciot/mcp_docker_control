@@ -13,6 +13,7 @@ services:
       - ENV=${ENV:-default}
       - AUTH_ENABLED=${AUTH_ENABLED:-false}
       - AUTH_PASSWORD=${AUTH_PASSWORD:-}
+      - AUTH_PERMISSION_LEVEL=${AUTH_PERMISSION_LEVEL:-full-control}
       - AUTO_DISCOVER=true
     volumes:
       # Mount Docker socket to control Docker from container

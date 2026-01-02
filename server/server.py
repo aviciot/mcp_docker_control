@@ -6,6 +6,7 @@ Main server application with authentication middleware and auto-discovery
 
 import logging
 import sys
+import os
 from pathlib import Path
 from contextlib import asynccontextmanager
 
@@ -38,9 +39,10 @@ class AuthenticationMiddleware:
     def __init__(self, app, config: dict):
         self.app = app
         self.config = config
-        self.auth_enabled = config.get('security', {}).get('authentication', {}).get('enabled', False)
-        self.password = config.get('security', {}).get('authentication', {}).get('password', '')
-        self.permission_level = config.get('security', {}).get('permissions', {}).get('level', 'full-control')
+        # Use os.getenv to override config values (following template_mcp pattern)
+        self.auth_enabled = os.getenv('AUTH_ENABLED', '').lower() == 'true' if os.getenv('AUTH_ENABLED') else config.get('security', {}).get('authentication', {}).get('enabled', False)
+        self.password = os.getenv('AUTH_PASSWORD', '') or config.get('security', {}).get('authentication', {}).get('password', '')
+        self.permission_level = os.getenv('AUTH_PERMISSION_LEVEL', '') or config.get('security', {}).get('permissions', {}).get('level', 'full-control')
         
         # Define read-only tools (tools that don't modify state)
         self.read_only_tools = {
@@ -219,14 +221,17 @@ app = Starlette(
     lifespan=lifespan
 )
 
-# Mount FastMCP app (FastMCP 2.x uses __call__ directly)
-app.mount('/', mcp)
+# Mount FastMCP HTTP app (following template_mcp pattern)
+mcp_http_app = mcp.http_app()
+app.mount('/', mcp_http_app)
 
 
 if __name__ == "__main__":
     import uvicorn
+    import os
     
-    port = int(config.get('server', {}).get('port', 8300))
+    # Use os.getenv to override config values (following template_mcp pattern)
+    port = int(os.getenv('MCP_PORT', config.get('server', {}).get('port', 8300)))
     host = config.get('server', {}).get('host', '0.0.0.0')
     
     logger.info(f"Starting server on {host}:{port}")

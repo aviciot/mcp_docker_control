@@ -2,7 +2,7 @@
 server:
   version: "1.0.0"
   host: "0.0.0.0"
-  port: ${MCP_PORT:-8300}
+  port: 8300  # Override with MCP_PORT env var in .env
   hot_reload: true
   auto_discover: true
 
@@ -14,15 +14,15 @@ mcp:
 # Security Configuration
 security:
   authentication:
-    enabled: false  # No ${} - plain boolean
-    password: ""    # Empty by default
+    enabled: false  # Set AUTH_ENABLED=true in .env to enable
+    password: ""    # Set AUTH_PASSWORD in .env
   
   # Permission Levels
   permissions:
     # User permission level: "read-only" or "full-control"
     # read-only: Can list, view status, logs, stats, health
     # full-control: Can also start, stop, restart, compose operations
-    level: "full-control"  # No ${} by default
+    level: "full-control"  # Set AUTH_PERMISSION_LEVEL in .env
 
 # Logging
 logging:
