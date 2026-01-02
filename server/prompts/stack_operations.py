@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 @mcp.prompt(
     name="stack_operations",
-    description="Comprehensive guide for Docker Compose stack management including viewing, restarting, and troubleshooting entire stacks efficiently. Use this when user asks about stacks, projects, or wants to manage multiple related containers together."
+    description="CRITICAL: Guide for Docker Compose stack management with STRICT password handling rules. NEVER guess passwords - always ask user explicitly. Use this when user asks about stacks, projects, or wants to manage multiple related containers together."
 )
 def stack_operations():
     """
@@ -38,10 +38,14 @@ def stack_operations():
 
 ### 3. Restart Entire Stack
 **When user asks:** "Restart omni2 stack", "Reboot the X application"
-**IMPORTANT:** This operation REQUIRES password!
+**CRITICAL:** This operation REQUIRES password!
 **Flow:**
-  1. If password not provided → Ask user: "I need the password to restart the stack. Please provide the password."
-  2. Once provided → Use: restart_stack(container_name="any-container-in-stack", password="user-provided-password")
+  1. Check user's message for password
+  2. If NO password found → **ASK and WAIT**: "I need the password to restart the stack. What is the password?"
+  3. **DO NOT** call any tool until user provides password
+  4. Once user provides password → Use: restart_stack(container_name="any-container-in-stack", password="exact-user-password")
+  
+**FORBIDDEN:** Never guess passwords, never use default values like "admin", "password", "docker"
 
 ## Password-Required Operations
 
@@ -56,17 +60,31 @@ def stack_operations():
 
 **Correct Flow:**
 1. User requests operation: "Restart omni2 stack"
-2. Check if password provided in request
-3. If NO password → Respond: "To restart the stack, I need the authentication password. Please provide it."
-4. User provides password
-5. Execute: restart_stack(container_name="omni2-bridge", password="user-password")
+2. Check if password provided in user's message
+3. If NO password in message → **STOP and ASK**: "I need the password to restart the omni2 stack. What is the password?"
+4. **WAIT** for user to provide password - DO NOT GUESS
+5. Once user provides password → Execute: restart_stack(container_name="omni2-bridge", password="user-provided-password")
+
+**CRITICAL RULE: NEVER GUESS PASSWORDS**
+- DO NOT use default passwords like "admin", "password", "docker", etc.
+- DO NOT try common passwords
+- DO NOT make up passwords
+- ALWAYS wait for user to explicitly provide the password
 
 **Example Dialogue:**
 ```
 User: "Restart the omni2 stack"
-Assistant: "I'll restart the omni2 stack. To proceed, I need the authentication password."
-User: "password is avicohen"
-Assistant: [calls restart_stack("omni2-bridge", "avicohen")]
+Assistant: "I need the password to restart the omni2 stack. What is the password?"
+[WAIT - do not call any tool yet]
+
+User: "the password is avicohen"
+Assistant: [NOW calls restart_stack("omni2-bridge", "avicohen")]
+```
+
+**Example WITH Password in Request:**
+```
+User: "Restart omni2 stack with password avicohen"
+Assistant: [calls restart_stack("omni2-bridge", "avicohen") immediately]
 ```
 
 ## Common Patterns
