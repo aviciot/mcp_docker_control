@@ -204,6 +204,46 @@ async def lifespan(app):
 # Load config for middleware
 config = get_config()
 
+# Mount FastMCP HTTP app FIRST to get its lifespan (following template_mcp pattern)
+mcp_http_app = mcp.http_app()
+
+@asynccontextmanager
+async def combined_lifespan(app):
+    """Combined lifespan for both our setup and FastMCP"""
+    # Start FastMCP lifespan
+    async with mcp_http_app.lifespan(app):
+        # Run our custom startup
+        global audit_logger
+        
+        logger.info("=== Docker Control MCP Server Starting ===")
+        
+        # Load and validate configuration
+        config = get_config()
+        validate_config(config)
+        logger.info(f"Configuration loaded: {config.get('mcp', {}).get('name')}")
+        
+        # Initialize audit logger
+        audit_logger = AuditLogger(config)
+        logger.info("Audit logger initialized")
+        
+        # Start configuration hot reload watcher
+        if config.get('server', {}).get('hot_reload', True):
+            start_config_watcher()
+        
+        # Auto-discover modules
+        if config.get('server', {}).get('auto_discover', True):
+            logger.info("Auto-discovering modules...")
+            auto_discover_modules()
+        
+        logger.info("=== Docker Control MCP Server Started ===")
+        
+        yield
+        
+        # Shutdown
+        stop_config_watcher()
+        if audit_logger:
+            audit_logger.close()
+
 # Create Starlette app with middleware
 middleware = [
     Middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*']),
@@ -218,11 +258,10 @@ routes = [
 app = Starlette(
     routes=routes,
     middleware=middleware,
-    lifespan=lifespan
+    lifespan=combined_lifespan
 )
 
-# Mount FastMCP HTTP app (following template_mcp pattern)
-mcp_http_app = mcp.http_app()
+# Mount FastMCP HTTP app
 app.mount('/', mcp_http_app)
 
 
