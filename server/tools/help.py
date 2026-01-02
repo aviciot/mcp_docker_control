@@ -27,9 +27,22 @@ def help(tool_name: str = ""):
     
     tools_help = {
         # READ-ONLY TOOLS (No password needed)
+        "list_stacks": {
+            "category": "Read-Only",
+            "description": "Show all Docker Compose stacks/projects with summary (FASTEST for stack overview)",
+            "parameters": "None",
+            "examples": [
+                "Show me all stacks",
+                "What stacks are running?",
+                "List all Docker Compose projects",
+                "Show available stacks"
+            ],
+            "syntax": "list_stacks()"
+        },
+        
         "list_containers": {
             "category": "Read-Only",
-            "description": "List all Docker containers",
+            "description": "List all Docker containers individually",
             "parameters": "all_containers (bool, default=False)",
             "examples": [
                 "Show me all containers",
