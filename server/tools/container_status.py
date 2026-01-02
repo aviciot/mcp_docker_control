@@ -13,8 +13,11 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def get_container_status(container_name: str) -> str:
+@mcp.tool(
+    name="container_status",
+    description="Get detailed status information for a specific Docker container including state, ports, health, and configuration."
+)
+def container_status(container_name: str):
     """
     Get detailed status of a Docker container
     

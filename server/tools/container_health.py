@@ -12,8 +12,11 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def check_containers_health() -> str:
+@mcp.tool(
+    name="check_containers_health",
+    description="Check the health status of all Docker containers with health checks defined. Returns status with visual indicators (healthy, unhealthy, starting, or no health check)."
+)
+def check_containers_health():
     """
     Check health status of all containers with health checks defined
     

@@ -10,8 +10,11 @@ from mcp_app import mcp
 logger = logging.getLogger(__name__)
 
 
-@mcp.prompt()
-def safe_restart(container_name: str) -> str:
+@mcp.prompt(
+    name="safe_restart",
+    description="Safe container restart workflow with verification that checks container state before and after restart."
+)
+def safe_restart(container_name: str):
     """
     Safe container restart workflow with verification.
     

@@ -12,13 +12,16 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def get_container_logs(
+@mcp.tool(
+    name="get_container_logs",
+    description="Retrieve logs from a Docker container with options for tail lines, since timestamp, and timestamp display."
+)
+def get_container_logs(
     container_name: str,
     tail: int = 100,
     since: str = "",
     timestamps: bool = False
-) -> str:
+):
     """
     Get logs from a Docker container
     

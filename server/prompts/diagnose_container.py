@@ -10,8 +10,11 @@ from mcp_app import mcp
 logger = logging.getLogger(__name__)
 
 
-@mcp.prompt()
-def diagnose_container(container_name: str) -> str:
+@mcp.prompt(
+    name="diagnose_container",
+    description="Comprehensive container diagnostic workflow including status checks, logs analysis, resource usage, and health verification."
+)
+def diagnose_container(container_name: str):
     """
     Comprehensive container diagnostic workflow.
     

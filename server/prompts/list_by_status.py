@@ -10,8 +10,11 @@ from mcp_app import mcp
 logger = logging.getLogger(__name__)
 
 
-@mcp.prompt()
-def list_by_status() -> str:
+@mcp.prompt(
+    name="list_by_status",
+    description="Guide for filtering and listing Docker containers by their current state (running, stopped, paused, etc.)."
+)
+def list_by_status():
     """
     Guide for filtering and listing containers by status and other criteria.
     

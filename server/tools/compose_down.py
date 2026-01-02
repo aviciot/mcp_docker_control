@@ -13,8 +13,11 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def compose_down(project_path: str, remove_volumes: bool = False) -> str:
+@mcp.tool(
+    name="compose_down",
+    description="Stop and remove Docker Compose services with options to remove volumes and orphaned containers. Requires full-control permission level."
+)
+def compose_down(project_path: str, remove_volumes: bool = False):
     """
     Stop and remove Docker Compose services
     

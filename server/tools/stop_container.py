@@ -12,8 +12,11 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def stop_container(container_name: str, timeout: int = 10) -> str:
+@mcp.tool(
+    name="stop_container",
+    description="Stop a running Docker container gracefully with configurable timeout. Requires full-control permission level."
+)
+def stop_container(container_name: str, timeout: int = 10):
     """
     Stop a running Docker container
     

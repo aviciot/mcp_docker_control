@@ -13,8 +13,11 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def compose_up(project_path: str, detached: bool = True, build: bool = False) -> str:
+@mcp.tool(
+    name="compose_up",
+    description="Start Docker Compose services with options to build, force recreate, and run in detached mode. Requires full-control permission level."
+)
+def compose_up(project_path: str, detached: bool = True, build: bool = False):
     """
     Start Docker Compose services
     

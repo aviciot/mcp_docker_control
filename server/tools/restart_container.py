@@ -12,8 +12,11 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def restart_container(container_name: str, timeout: int = 10) -> str:
+@mcp.tool(
+    name="restart_container",
+    description="Restart a Docker container gracefully with configurable timeout. Requires full-control permission level."
+)
+def restart_container(container_name: str, timeout: int = 10):
     """
     Restart a Docker container
     

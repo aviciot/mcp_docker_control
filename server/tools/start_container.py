@@ -12,8 +12,11 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def start_container(container_name: str) -> str:
+@mcp.tool(
+    name="start_container",
+    description="Start a stopped Docker container. Requires full-control permission level."
+)
+def start_container(container_name: str):
     """
     Start a stopped Docker container
     

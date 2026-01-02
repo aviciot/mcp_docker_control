@@ -13,8 +13,11 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def compose_restart(project_path: str, services: str = "") -> str:
+@mcp.tool(
+    name="compose_restart",
+    description="Restart Docker Compose services gracefully with configurable timeout. Requires full-control permission level."
+)
+def compose_restart(project_path: str, services: str = ""):
     """
     Restart Docker Compose services
     

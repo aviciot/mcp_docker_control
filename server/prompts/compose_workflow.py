@@ -10,8 +10,11 @@ from mcp_app import mcp
 logger = logging.getLogger(__name__)
 
 
-@mcp.prompt()
-def compose_workflow(project_name: str, compose_file_path: str = "./docker-compose.yml") -> str:
+@mcp.prompt(
+    name="compose_workflow",
+    description="Docker Compose workflow guide for common operations like starting, stopping, and managing multi-container applications."
+)
+def compose_workflow(project_name: str, compose_file_path: str = "./docker-compose.yml"):
     """
     Docker Compose operations workflow.
     

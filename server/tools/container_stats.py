@@ -13,8 +13,11 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def get_container_stats(container_name: str) -> str:
+@mcp.tool(
+    name="container_stats",
+    description="Get real-time resource usage statistics for a Docker container including CPU, memory, network I/O, and disk I/O."
+)
+def container_stats(container_name: str):
     """
     Get resource usage statistics for a Docker container
     

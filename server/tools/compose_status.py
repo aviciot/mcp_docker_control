@@ -14,8 +14,11 @@ from config import get_config
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def compose_status(project_path: str) -> str:
+@mcp.tool(
+    name="compose_status",
+    description="Get the status of all services in a Docker Compose project including container names, states, and port mappings."
+)
+def compose_status(project_path: str):
     """
     Get status of Docker Compose services
     

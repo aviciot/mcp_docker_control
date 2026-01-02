@@ -12,8 +12,11 @@ from utils.audit_logger import log_audit
 logger = logging.getLogger(__name__)
 
 
-@mcp.tool()
-async def list_containers(all_containers: bool = False) -> str:
+@mcp.tool(
+    name="list_containers",
+    description="List all Docker containers. Use all_containers=true to include stopped containers, or all_containers=false for only running containers."
+)
+def list_containers(all_containers: bool = False):
     """
     List Docker containers
     

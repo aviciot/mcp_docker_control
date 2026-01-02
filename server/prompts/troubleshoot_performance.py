@@ -10,8 +10,11 @@ from mcp_app import mcp
 logger = logging.getLogger(__name__)
 
 
-@mcp.prompt()
-def troubleshoot_performance(container_name: str) -> str:
+@mcp.prompt(
+    name="troubleshoot_performance",
+    description="Container performance troubleshooting workflow including resource analysis, optimization suggestions, and scaling recommendations."
+)
+def troubleshoot_performance(container_name: str):
     """
     Container performance troubleshooting workflow.
     
