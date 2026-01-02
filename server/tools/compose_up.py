@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 @mcp.tool(
     name="compose_up",
-    description="Start Docker Compose services with options to build, force recreate, and run in detached mode. Requires full-control permission level."
+    description="Start Docker Compose services with options to build, force recreate, and run in detached mode. Requires full-control permission level and password verification."
 )
-def compose_up(project_path: str, detached: bool = True, build: bool = False):
+def compose_up(project_path: str, password: str, detached: bool = True, build: bool = False):
     """
     Start Docker Compose services
     
@@ -30,6 +30,13 @@ def compose_up(project_path: str, detached: bool = True, build: bool = False):
         str: Success or error message
     """
     try:
+        # Validate password first
+        import os
+        expected_password = os.getenv('AUTH_PASSWORD', '')
+        if not password or password != expected_password:
+            log_audit(operation="compose_up", success=False, error="Invalid or missing password")
+            return "Error: Invalid or missing password. Authentication required for this operation."
+        
         # Validate input
         if not project_path:
             return "Error: project_path cannot be empty"

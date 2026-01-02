@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 @mcp.tool(
     name="start_container",
-    description="Start a stopped Docker container. Requires full-control permission level."
+    description="Start a stopped Docker container. Requires full-control permission level and password verification."
 )
-def start_container(container_name: str):
+def start_container(container_name: str, password: str):
     """
     Start a stopped Docker container
     
@@ -27,6 +27,13 @@ def start_container(container_name: str):
         str: Success or error message
     """
     try:
+        # Validate password first
+        import os
+        expected_password = os.getenv('AUTH_PASSWORD', '')
+        if not password or password != expected_password:
+            log_audit(operation="start_container", container=container_name, success=False, error="Invalid or missing password")
+            return "Error: Invalid or missing password. Authentication required for this operation."
+        
         # Validate input
         if not container_name:
             return "Error: container_name cannot be empty"

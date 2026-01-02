@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 @mcp.tool(
     name="restart_container",
-    description="Restart a Docker container gracefully with configurable timeout. Requires full-control permission level."
+    description="Restart a Docker container gracefully with configurable timeout. Requires full-control permission level and password verification."
 )
-def restart_container(container_name: str, timeout: int = 10):
+def restart_container(container_name: str, password: str, timeout: int = 10):
     """
     Restart a Docker container
     
@@ -28,6 +28,13 @@ def restart_container(container_name: str, timeout: int = 10):
         str: Success or error message
     """
     try:
+        # Validate password first
+        import os
+        expected_password = os.getenv('AUTH_PASSWORD', '')
+        if not password or password != expected_password:
+            log_audit(operation="restart_container", container=container_name, success=False, error="Invalid or missing password")
+            return "Error: Invalid or missing password. Authentication required for this operation."
+        
         # Validate input
         if not container_name:
             return "Error: container_name cannot be empty"

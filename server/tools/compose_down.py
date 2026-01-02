@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 @mcp.tool(
     name="compose_down",
-    description="Stop and remove Docker Compose services with options to remove volumes and orphaned containers. Requires full-control permission level."
+    description="Stop and remove Docker Compose services with options to remove volumes and orphaned containers. Requires full-control permission level and password verification."
 )
-def compose_down(project_path: str, remove_volumes: bool = False):
+def compose_down(project_path: str, password: str, remove_volumes: bool = False):
     """
     Stop and remove Docker Compose services
     
@@ -29,6 +29,13 @@ def compose_down(project_path: str, remove_volumes: bool = False):
         str: Success or error message
     """
     try:
+        # Validate password first
+        import os
+        expected_password = os.getenv('AUTH_PASSWORD', '')
+        if not password or password != expected_password:
+            log_audit(operation="compose_down", success=False, error="Invalid or missing password")
+            return "Error: Invalid or missing password. Authentication required for this operation."
+        
         # Validate input
         if not project_path:
             return "Error: project_path cannot be empty"

@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 @mcp.tool(
     name="compose_restart",
-    description="Restart Docker Compose services gracefully with configurable timeout. Requires full-control permission level."
+    description="Restart Docker Compose services gracefully with configurable timeout. Requires full-control permission level and password verification."
 )
-def compose_restart(project_path: str, services: str = ""):
+def compose_restart(project_path: str, password: str, services: str = ""):
     """
     Restart Docker Compose services
     
@@ -29,6 +29,13 @@ def compose_restart(project_path: str, services: str = ""):
         str: Success or error message
     """
     try:
+        # Validate password first
+        import os
+        expected_password = os.getenv('AUTH_PASSWORD', '')
+        if not password or password != expected_password:
+            log_audit(operation="compose_restart", success=False, error="Invalid or missing password")
+            return "Error: Invalid or missing password. Authentication required for this operation."
+        
         # Validate input
         if not project_path:
             return "Error: project_path cannot be empty"
