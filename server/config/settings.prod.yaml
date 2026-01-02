@@ -1,0 +1,22 @@
+# Production Configuration
+# Overrides settings.yaml when ENV=prod
+
+server:
+  port: 8300
+  hot_reload: false
+
+security:
+  authentication:
+    enabled: true
+    # Set AUTH_PASSWORD environment variable
+  permissions:
+    level: "full-control"  # or "read-only" for restricted access
+
+logging:
+  level: "INFO"
+  format: "json"
+
+docker:
+  filter:
+    # Example: Blacklist sensitive containers in production
+    blacklist: []

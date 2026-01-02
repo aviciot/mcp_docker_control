@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  docker_control_mcp:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: docker-control-mcp
+    ports:
+      - "${MCP_PORT:-8300}:8300"
+    environment:
+      - MCP_PORT=8300
+      - ENV=${ENV:-default}
+      - AUTH_ENABLED=${AUTH_ENABLED:-false}
+      - AUTH_PASSWORD=${AUTH_PASSWORD:-}
+      - AUTO_DISCOVER=true
+    volumes:
+      # Mount Docker socket to control Docker from container
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Mount server code for hot reload in development
+      - ./server:/app:ro
+      # Mount logs directory for audit logs
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8300/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped

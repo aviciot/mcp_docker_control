@@ -1,0 +1,21 @@
+# Development Configuration
+# Overrides settings.yaml when ENV=dev
+
+server:
+  port: 8301
+  hot_reload: true
+
+security:
+  authentication:
+    enabled: false
+  permissions:
+    level: "full-control"
+
+logging:
+  level: "DEBUG"
+
+docker:
+  filter:
+    # Example: Only allow specific containers in development
+    whitelist: []
+    blacklist: []

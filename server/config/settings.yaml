@@ -1,0 +1,47 @@
+# Server Configuration
+server:
+  version: "1.0.0"
+  host: "0.0.0.0"
+  port: ${MCP_PORT:-8300}
+  hot_reload: true
+  auto_discover: true
+
+# MCP Configuration
+mcp:
+  name: "docker-control"
+  description: "Docker Control MCP - Manage Docker containers and Compose services"
+
+# Security Configuration
+security:
+  authentication:
+    enabled: false  # No ${} - plain boolean
+    password: ""    # Empty by default
+  
+  # Permission Levels
+  permissions:
+    # User permission level: "read-only" or "full-control"
+    # read-only: Can list, view status, logs, stats, health
+    # full-control: Can also start, stop, restart, compose operations
+    level: "full-control"  # No ${} by default
+
+# Logging
+logging:
+  level: "INFO"
+  format: "text"  # text or json
+
+# Docker Configuration
+docker:
+  socket_path: "/var/run/docker.sock"
+  
+  # Filter Configuration
+  filter:
+    # Whitelist: Only these containers can be managed (empty = allow all)
+    whitelist: []
+    
+    # Blacklist: These containers cannot be managed (empty = no restrictions)
+    blacklist: []
+  
+  # Audit Configuration
+  audit:
+    enabled: true
+    log_path: "logs/audit.log"
