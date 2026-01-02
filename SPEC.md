@@ -6,6 +6,48 @@
 
 ---
 
+## 🔧 Critical Rule #0: Tool and Prompt Decorator Pattern
+
+⚠️ **#0 PRIORITY - ALWAYS USE EXPLICIT PARAMETERS**
+
+**THE PROBLEM THAT CAUSED CLIENT FAILURES:**
+Original implementation used `@mcp.tool()` with `async def` and return type annotations, which caused mcpjam and other MCP clients to receive undefined/invalid output structures.
+
+**THE CORRECT PATTERN (ONLY ACCEPTABLE FORMAT):**
+
+```python
+# ✅ CORRECT - ALWAYS USE THIS PATTERN
+@mcp.tool(
+    name="list_containers",
+    description="List all Docker containers with optional filtering"
+)
+def list_containers(all_containers: bool = False):
+    # Tool logic here
+    return "result string"
+```
+
+**NEVER USE THESE PATTERNS:**
+
+```python
+# ❌ WRONG - Empty decorator, async, return type
+@mcp.tool()
+async def list_containers(all_containers: bool = False) -> str:
+    return result
+```
+
+**CRITICAL RULES:**
+- ✅ MUST include explicit `name="..."` and `description="..."` in decorator
+- ❌ NO `async` keyword on tool/prompt functions
+- ❌ NO return type annotations (like `-> str`)
+- ✅ Use regular `def`, never `async def`
+- ✅ Multiple tools CAN be grouped in one file by category (e.g., `container_operations.py` with start/stop/restart)
+- ✅ Auto-discovery finds all decorated functions across all files
+
+**WHY THIS MATTERS:**
+MCP clients expect specific metadata structure from decorators. Empty decorators with async/return types cause FastMCP serialization to produce invalid output that breaks client integration.
+
+---
+
 ## Implementation Details
 
 This MCP was built following **template_mcp** patterns with these customizations:
