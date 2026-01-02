@@ -226,7 +226,7 @@ app.mount('/', mcp)
 if __name__ == "__main__":
     import uvicorn
     
-    port = config.get('server', {}).get('port', 8300)
+    port = int(config.get('server', {}).get('port', 8300))
     host = config.get('server', {}).get('host', '0.0.0.0')
     
     logger.info(f"Starting server on {host}:{port}")
