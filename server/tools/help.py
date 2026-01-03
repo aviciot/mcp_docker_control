@@ -177,42 +177,6 @@ def help(tool_name: str = ""):
                 "Restart the stack that omni2-app belongs to with password avicohen"
             ],
             "syntax": "restart_stack(container_name='omni2-bridge', password='avicohen')"
-        },
-        
-        "compose_up": {
-            "category": "Control (Password Required)",
-            "description": "Start Docker Compose services",
-            "parameters": "project_path (required), password (required), detached (default=True), build (default=False)",
-            "examples": [
-                "Start omni2 compose project with password avicohen",
-                "Bring up the stack at /path/to/project with password avicohen",
-                "Start compose services and rebuild images, password avicohen"
-            ],
-            "syntax": "compose_up(project_path='C:/path/to/omni2', password='avicohen', build=True)"
-        },
-        
-        "compose_down": {
-            "category": "Control (Password Required)",
-            "description": "Stop and remove Docker Compose services",
-            "parameters": "project_path (required), password (required), remove_volumes (default=False)",
-            "examples": [
-                "Stop omni2 compose project with password avicohen",
-                "Bring down the stack at /path/to/project with password avicohen",
-                "Stop compose and remove volumes, password avicohen"
-            ],
-            "syntax": "compose_down(project_path='C:/path/to/omni2', password='avicohen', remove_volumes=True)"
-        },
-        
-        "compose_restart": {
-            "category": "Control (Password Required)",
-            "description": "Restart Docker Compose services",
-            "parameters": "project_path (required), password (required), services (optional)",
-            "examples": [
-                "Restart omni2 compose project with password avicohen",
-                "Restart all services in /path/to/project with password avicohen",
-                "Restart specific service in compose, password avicohen"
-            ],
-            "syntax": "compose_restart(project_path='C:/path/to/omni2', password='avicohen', services='app db')"
         }
     }
     
